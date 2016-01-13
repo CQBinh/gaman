@@ -2,10 +2,10 @@ require 'thor'
 
 module Gaman
   class Foo < Thor
-    desc "hello NAME", "This will greet you"
+    desc "bar NAME", "This will greet you"
     long_desc <<-HELLO_WORLD
 
-    `hello NAME` will print out a message to the person of your choosing.
+    `bar NAME` will print out a message to the person of your choosing.
 
     Brian Kernighan actually wrote the first "Hello, World!" program
     as part of the documentation for the BCPL programming language
