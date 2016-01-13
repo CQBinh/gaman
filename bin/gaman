@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'gaman'
+Gaman::Foo.start(ARGV)
+
+puts "Hello from gaman"
