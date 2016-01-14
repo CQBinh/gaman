@@ -2,12 +2,8 @@
 
 gem install --no-document rubocop rubocop-checkstyle_formatter \
     rails_best_practices \
-    brakeman brakeman_translate_checkstyle_format \
     reek \
     checkstyle_filter-git saddler saddler-reporter-github \
-    scss_lint scss_lint_reporter_checkstyle
-
-npm install -g eslint
 
 if [ -z "${CI_PULL_REQUEST}" ]; then
     # when not pull request
@@ -38,18 +34,6 @@ cat rails_best_practices_output.xml \
     --reporter $REPORTER
 
 echo "********************"
-echo "* Brakeman         *"
-echo "********************"
-brakeman -o brakeman.json
-cat brakeman.json \
-  | brakeman_translate_checkstyle_format translate \
-  | checkstyle_filter-git diff origin/master \
-  | saddler report \
-    --require saddler/reporter/github \
-    --reporter $REPORTER
-
-
-echo "********************"
 echo "* Reek             *"
 echo "********************"
 reek app --format xml > reek.xml
@@ -67,5 +51,4 @@ LINT_RESULT_DIR="$CIRCLE_ARTIFACTS/lint"
 mkdir "$LINT_RESULT_DIR"
 cp -v "rubocop.xml" "$LINT_RESULT_DIR/"
 cp -v "rails_best_practices_output.xml" "$LINT_RESULT_DIR/"
-cp -v "brakeman.json" "$LINT_RESULT_DIR/"
 cp -v "reek.xml" "$LINT_RESULT_DIR/"
