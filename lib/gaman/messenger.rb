@@ -12,6 +12,7 @@ module Gaman
       if ssh_keys.nil?
         notice_message('You have no ssh key.')
       else
+        fail ArgumentError, 'ssh_keys must be an Array' unless ssh_keys.class.eql? Array
         ssh_keys.each_with_index do |key, index|
           puts "[#{Rainbow(index).underline.bright.cyan}] - #{key}"
         end
