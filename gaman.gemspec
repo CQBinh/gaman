@@ -26,10 +26,13 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rubocop'
 
-  # comment rubocop directly on pull request
+  # comment linter directly on pull request
   spec.add_development_dependency 'saddler'
   spec.add_development_dependency 'saddler-reporter-github'
   spec.add_development_dependency 'rubocop-checkstyle_formatter'
+  spec.add_development_dependency 'rails_best_practices'
+  spec.add_development_dependency 'brakeman'
+  spec.add_development_dependency 'reek'
 
   spec.add_dependency 'thor'
 end

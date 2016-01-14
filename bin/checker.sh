@@ -60,26 +60,6 @@ cat reek.xml \
     --reporter $REPORTER
 
 echo "********************"
-echo "* ESLint           *"
-echo "********************"
-eslint app/assets/javascripts/ -f checkstyle -o eslint.xml
-cat eslint.xml \
-  | checkstyle_filter-git diff origin/master \
-  | saddler report \
-    --require saddler/reporter/github \
-    --reporter $REPORTER
-
-echo "********************"
-echo "* SCSS-Lint        *"
-echo "********************"
-scss-lint --require=scss_lint_reporter_checkstyle --format=Checkstyle -o scsslint.xml
-cat scsslint.xml \
-  | checkstyle_filter-git diff origin/master \
-  | saddler report \
-    --require saddler/reporter/github \
-    --reporter $REPORTER
-
-echo "********************"
 echo "* save outputs     *"
 echo "********************"
 LINT_RESULT_DIR="$CIRCLE_ARTIFACTS/lint"
@@ -89,5 +69,3 @@ cp -v "rubocop.xml" "$LINT_RESULT_DIR/"
 cp -v "rails_best_practices_output.xml" "$LINT_RESULT_DIR/"
 cp -v "brakeman.json" "$LINT_RESULT_DIR/"
 cp -v "reek.xml" "$LINT_RESULT_DIR/"
-cp -v "eslint.xml" "$LINT_RESULT_DIR/"
-cp -v "scsslint.xml" "$LINT_RESULT_DIR/"
