@@ -1,0 +1,10 @@
+machine:
+  ruby:
+    version:
+      2.2.3
+
+  environment:
+    CIRCLE_ENV: test
+test:
+  pre:
+    - bin/run-rubocop.sh
