@@ -22,27 +22,6 @@ cat rubocop.xml \
     --require saddler/reporter/github \
     --reporter $REPORTER
 
-echo "***********************"
-echo "* Rails Best Pratices *"
-echo "***********************"
-rails_best_practices -f xml
-
-cat rails_best_practices_output.xml \
-  | checkstyle_filter-git diff origin/master \
-  | saddler report \
-    --require saddler/reporter/github \
-    --reporter $REPORTER
-
-echo "********************"
-echo "* Reek             *"
-echo "********************"
-reek app --format xml > reek.xml
-cat reek.xml \
-  | checkstyle_filter-git diff origin/master \
-  | saddler report \
-    --require saddler/reporter/github \
-    --reporter $REPORTER
-
 echo "********************"
 echo "* save outputs     *"
 echo "********************"
@@ -50,5 +29,3 @@ LINT_RESULT_DIR="$CIRCLE_ARTIFACTS/lint"
 
 mkdir "$LINT_RESULT_DIR"
 cp -v "rubocop.xml" "$LINT_RESULT_DIR/"
-cp -v "rails_best_practices_output.xml" "$LINT_RESULT_DIR/"
-cp -v "reek.xml" "$LINT_RESULT_DIR/"
