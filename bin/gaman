@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
 require 'gaman'
-Gaman::Foo.start(ARGV)
+Gaman::GithubAccountManager.start(ARGV)

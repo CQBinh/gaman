@@ -1,6 +1,6 @@
-require "gaman/version"
-require "gaman/cli"
+require 'gaman/version'
+require 'gaman/cli'
+require 'pry'
 
 module Gaman
-  # Your code goes here...
 end
