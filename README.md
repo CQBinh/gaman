@@ -1,6 +1,21 @@
 # Gaman
 [![Gem Version](https://badge.fury.io/rb/gaman.svg)](https://badge.fury.io/rb/gaman)
 
+When you working on two `github` account. You have to create two `ssh-key` and add them to your accounts (i.e: company account and personal account).
+
+To switch between them, typicaly, you open terminal:
+```
+$ ll ~/.ssh/
+$ eval "$(ssh-agent -s)"
+$ ssh-add path/to/new/ssh
+$ ssh -T git@github.com
+```
+It will annoys you alot.
+
+Don't tired any more. `gaman` is here to help you on that.
+
+**For Vietnamese developer**: you can see more at [my blog artical](http://blog.appconus.com/2015/08/06/su-dung-ssh-voi-2-tai-khoan-github-cung-1-luc-2/).
+
 Required:
 
 - `ruby` 1.9 or greater (see https://www.ruby-lang.org/en/installation )
