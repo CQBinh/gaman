@@ -5,10 +5,10 @@ machine:
 
   environment:
     CIRCLE_ENV: test
-    
+
 dependencies:
   pre:
-    - gem install bundle
+    - gem install bundler
 test:
   pre:
     - bin/checker.sh
