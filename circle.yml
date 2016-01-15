@@ -2,12 +2,13 @@ machine:
   ruby:
     version:
       2.2.3
-  bundler:
-    version:
-      1.11.2
 
   environment:
     CIRCLE_ENV: test
+    
+dependencies:
+  pre:
+    - gem install bundle
 test:
   pre:
     - bin/checker.sh
