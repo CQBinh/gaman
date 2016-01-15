@@ -6,11 +6,13 @@ require 'gaman/version'
 Gem::Specification.new do |spec|
   spec.name          = 'gaman'
   spec.version       = Gaman::VERSION
+  spec.platform      = Gem::Platform::RUBY
   spec.authors       = ['CAO Quang Binh']
   spec.email         = ['binhcq@asiantech.vn']
 
   spec.summary       = 'Github account manager.'
   spec.description   = 'Switch ssh github'
+  spec.homepage      = 'https://github.com/Nguyenanh/fastgem'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
