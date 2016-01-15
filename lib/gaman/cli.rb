@@ -22,6 +22,17 @@ module Gaman
       end
     end
 
+    desc 'show', 'Show public key so you can copy to clipboard'
+    def show
+      system('eval "$(ssh-agent -s)"')
+      ssh_keys = all_public_ssh_file
+      if ssh_keys.nil?
+        error_message('There is no ssh key to show. Exiting...')
+      else
+        get_user_input_number_and_then_show(ssh_keys)
+      end
+    end
+
     desc 'list', 'Check list ssh keys on machine'
     def list
       notice_message('Checking ssh keys in your machine...')
@@ -62,7 +73,8 @@ module Gaman
 
     def get_user_input_number_and_then_check_switch(ssh_keys)
       notice_message('Current ssh keyson your system:')
-      number = input_number(ssh_keys)
+      message = 'Which key do you want to switch? [Input number]'
+      number = input_number(ssh_keys, message)
       if number_valid?(number, ssh_keys)
         perform_switch_ssh_key(number, ssh_keys)
       else
@@ -70,9 +82,9 @@ module Gaman
       end
     end
 
-    def input_number(ssh_keys)
+    def input_number(ssh_keys, message)
       display_ssh_keys(ssh_keys)
-      number = ask(notice_message('Which key do you want to switch? [Input number]'))
+      number = ask(notice_message(message))
       begin
         Integer(number)
       rescue
@@ -103,6 +115,23 @@ module Gaman
       notice_message('Checking ssh conection to bitbucket...')
       check_ssh_github = 'ssh -T git@bitbucket.org'
       system(check_ssh_github)
+    end
+
+    def get_user_input_number_and_then_show(ssh_keys)
+      notice_message('Current ssh keyson your system:')
+      message = 'Which key do you want to show? [Input number]'
+      number = input_number(ssh_keys, message)
+      if number_valid?(number, ssh_keys)
+        perform_show_ssh_key(number, ssh_keys)
+      else
+        error_message('Wrong value. Exiting...')
+      end
+    end
+
+    def perform_show_ssh_key(number, ssh_keys)
+      key = ssh_keys[number]
+      key_path = "#{ssh_path}/#{key}"
+      system("cat #{key_path}")
     end
   end
 end
