@@ -50,10 +50,10 @@ And then follow the inline-instruction.
     $ gaman current_user
 
 ## Contributors
-[@at-binhcq](https://github.com/at-binhcq) from [AsianTech](http://asiantech.vn) with love.
+[@at-binhcq](https://github.com/CQBinh) from [AsianTech](http://asiantech.vn) with love.
 ## Contributing
 
-1. Fork [the project](https://github.com/AT-RubyRacer/gaman)
+1. Fork [the project](https://github.com/CQBinh/gaman)
 2. Create your feature branch (`git checkout -b my-awesome-feature`)
 3. Commit your changes (`git commit -m 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

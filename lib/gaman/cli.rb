@@ -9,10 +9,28 @@ module Gaman
     include Gaman::FileHelper
 
     desc 'current_user', 'Show current github account that ssh connects to'
+    method_option :server, aliases: '-s'
     def current_user
-      notice_message('Checking ssh conection to github...')
-      check_ssh_github = 'ssh -T git@github.com'
-      system(check_ssh_github)
+      server = options[:server]
+      case server
+      when 'github'
+        check_current_user_github
+      when 'bitbucket'
+        check_current_user_bitbucket
+      else
+        check_current_user_github
+      end
+    end
+
+    desc 'show', 'Show public key so you can copy to clipboard'
+    def show
+      system('eval "$(ssh-agent -s)"')
+      ssh_keys = all_public_ssh_file
+      if ssh_keys.nil?
+        error_message('There is no ssh key to show. Exiting...')
+      else
+        get_user_input_number_and_then_show(ssh_keys)
+      end
     end
 
     desc 'list', 'Check list ssh keys on machine'
@@ -55,7 +73,8 @@ module Gaman
 
     def get_user_input_number_and_then_check_switch(ssh_keys)
       notice_message('Current ssh keyson your system:')
-      number = input_number(ssh_keys)
+      message = 'Which key do you want to switch? [Input number]'
+      number = input_number(ssh_keys, message)
       if number_valid?(number, ssh_keys)
         perform_switch_ssh_key(number, ssh_keys)
       else
@@ -63,9 +82,9 @@ module Gaman
       end
     end
 
-    def input_number(ssh_keys)
+    def input_number(ssh_keys, message)
       display_ssh_keys(ssh_keys)
-      number = ask(notice_message('Which key do you want to switch? [Input number]'))
+      number = ask(notice_message(message))
       begin
         Integer(number)
       rescue
@@ -84,6 +103,35 @@ module Gaman
       notice_message("Adding #{key_path}")
       system("ssh-add #{key_path}")
       current_user
+    end
+
+    def check_current_user_github
+      notice_message('Checking ssh conection to github...')
+      check_ssh_github = 'ssh -T git@github.com'
+      system(check_ssh_github)
+    end
+
+    def check_current_user_bitbucket
+      notice_message('Checking ssh conection to bitbucket...')
+      check_ssh_github = 'ssh -T git@bitbucket.org'
+      system(check_ssh_github)
+    end
+
+    def get_user_input_number_and_then_show(ssh_keys)
+      notice_message('Current ssh keyson your system:')
+      message = 'Which key do you want to show? [Input number]'
+      number = input_number(ssh_keys, message)
+      if number_valid?(number, ssh_keys)
+        perform_show_ssh_key(number, ssh_keys)
+      else
+        error_message('Wrong value. Exiting...')
+      end
+    end
+
+    def perform_show_ssh_key(number, ssh_keys)
+      key = ssh_keys[number]
+      key_path = "#{ssh_path}/#{key}"
+      system("cat #{key_path}")
     end
   end
 end
