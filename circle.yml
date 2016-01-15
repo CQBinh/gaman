@@ -2,6 +2,9 @@ machine:
   ruby:
     version:
       2.2.3
+  bundler:
+    version:
+      1.11.2
 
   environment:
     CIRCLE_ENV: test

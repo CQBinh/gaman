@@ -9,10 +9,17 @@ module Gaman
     include Gaman::FileHelper
 
     desc 'current_user', 'Show current github account that ssh connects to'
+    method_option :server, aliases: '-s'
     def current_user
-      notice_message('Checking ssh conection to github...')
-      check_ssh_github = 'ssh -T git@github.com'
-      system(check_ssh_github)
+      server = options[:server]
+      case server
+      when 'github'
+        check_current_user_github
+      when 'bitbucket'
+        check_current_user_bitbucket
+      else
+        check_current_user_github
+      end
     end
 
     desc 'list', 'Check list ssh keys on machine'
@@ -84,6 +91,18 @@ module Gaman
       notice_message("Adding #{key_path}")
       system("ssh-add #{key_path}")
       current_user
+    end
+
+    def check_current_user_github
+      notice_message('Checking ssh conection to github...')
+      check_ssh_github = 'ssh -T git@github.com'
+      system(check_ssh_github)
+    end
+
+    def check_current_user_bitbucket
+      notice_message('Checking ssh conection to bitbucket...')
+      check_ssh_github = 'ssh -T git@bitbucket.org'
+      system(check_ssh_github)
     end
   end
 end
