@@ -1,7 +1,7 @@
 # Gaman
 [![Gem Version](https://badge.fury.io/rb/gaman.svg)](https://badge.fury.io/rb/gaman)
 
-When you working on two `github` account. You have to create two `ssh-key` and add them to your accounts (i.e: company account and personal account).
+When you work on two `github` account. You have to create two `ssh-key` and add them to your accounts (i.e: company account and personal account).
 
 To switch between them, typicaly, you open terminal:
 ```
@@ -12,7 +12,7 @@ $ ssh -T git@github.com
 ```
 It will annoys you alot.
 
-Don't tired any more. `gaman` is here to help you on that.
+Don't tired anymore. `gaman` is here to help you on that.
 
 **For Vietnamese developer**: you can see more at [my blog artical](http://blog.appconus.com/2015/08/06/su-dung-ssh-voi-2-tai-khoan-github-cung-1-luc-2/).
 
@@ -23,7 +23,7 @@ Required:
 
 Recommended:
 
-- `rvm` for controling your versions of ruby (see: https://github.com/rvm/rvm )
+- `rvm` for controlling your versions of ruby (see: https://github.com/rvm/rvm )
 
 ## Installation
 Install as you would any other ruby gem:
@@ -35,7 +35,7 @@ Install as you would any other ruby gem:
 
     $ gaman list
 
-### Switch to a ssh key
+### Switch to a specific ssh key
 
     $ gaman switch
 
@@ -48,6 +48,11 @@ And then follow the inline-instruction.
 ### Check current user that connect to github via ssh
 
     $ gaman current_user
+
+
+Params: `--server` (or `-s`): github/bitbucket
+
+If there is no param passed, github will be used as default
 
 ## Contributors
 [@at-binhcq](https://github.com/CQBinh) from [AsianTech](http://asiantech.vn) with love.

@@ -9,6 +9,13 @@ module Gaman
     include Gaman::FileHelper
 
     desc 'current_user', 'Show current github account that ssh connects to'
+    long_desc <<-current_user
+
+    Params: --server (or -s): github/bitbucket
+
+    If there is no param passed, github will be used as default
+
+    current_user
     method_option :server, aliases: '-s'
     def current_user
       server = options[:server]
