@@ -42,8 +42,31 @@ module Gaman
       system("ssh-keygen -t rsa -b 4096 -C #{options[:email]}")
     end
 
-    desc 'switch', 'Switch to another ssh key'
-    def switch
+    desc 'switch', 'Switch to another ssh key (pass key_index to directly switch)'
+    long_desc <<-switch
+
+    Params: key_index: key index from "list" method
+
+    switch
+    def switch(key_index = nil)
+      if key_index.nil?
+        switch_by_showing_list_keys
+      else
+        switch_by_key_index(key_index.to_i)
+      end
+    end
+
+    private
+
+    def switch_by_key_index(key_index)
+      ssh_keys = all_public_ssh_file
+      return error_message('There are no ssh keys. Exiting...') if ssh_keys.empty?
+      check_number_and_yield_if_valid(key_index, ssh_keys) do |number, ssh_keys|
+        switch_ssh_key(number, ssh_keys)
+      end
+    end
+
+    def switch_by_showing_list_keys
       eval_ssh_agent_s
 
       get_user_input_number(all_public_ssh_file) do |number, ssh_keys|
@@ -60,8 +83,6 @@ module Gaman
         puts "[#{Rainbow(index).underline.bright.cyan}] - #{key}"
       end
     end
-
-    private
 
     def eval_ssh_agent_s
       system('eval "$(ssh-agent -s)"')
@@ -80,9 +101,18 @@ module Gaman
     def get_user_input_number(ssh_keys)
       return error_message('There are no ssh keys. Exiting...') if ssh_keys.empty?
 
-      notice_message('Current ssh keyson your system:')
+      notice_message('Current ssh keys on your system:')
       message = 'Which key do you want to switch? [Input number]'
       number = input_number(ssh_keys, message)
+      if number_valid?(number, ssh_keys)
+        block_given? ? yield(number, ssh_keys) : [number, ssh_keys]
+      else
+        error_message('Wrong value. Exiting...')
+      end
+      # check_number_and_yield_if_valid(number, ssh_keys)
+    end
+
+    def check_number_and_yield_if_valid(number, ssh_keys)
       if number_valid?(number, ssh_keys)
         block_given? ? yield(number, ssh_keys) : [number, ssh_keys]
       else

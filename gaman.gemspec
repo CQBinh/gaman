@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['binh.cao@appconus.com']
 
   spec.summary       = 'Git Account MANager.'
-  spec.description   = 'Switch ssh github'
+  spec.description   = 'Switch git ssh connection'
   spec.homepage      = 'https://github.com/CQBinh/gaman'
   spec.license       = 'MIT'
 
