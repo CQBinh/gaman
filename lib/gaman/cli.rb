@@ -4,7 +4,7 @@ require_relative 'messenger'
 require_relative 'file_helper'
 
 module Gaman
-  class GithubAccountManager < Thor
+  class GitAccountManager < Thor
     include Gaman::Messenger
     include Gaman::FileHelper
 
@@ -113,7 +113,7 @@ module Gaman
     end
 
     def check_current_user(server)
-      servers = {'github' => 'github.com', 'bitbucket' => 'bitbucket.org'}
+      servers = { 'github' => 'github.com', 'bitbucket' => 'bitbucket.org' }
       notice_message("Checking ssh conection to #{server}...")
       system("ssh -T git@#{servers[server]}")
     end

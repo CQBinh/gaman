@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'gaman/messenger'
 
 RSpec.describe 'Messenger' do
-  let(:gaman) { Gaman::GithubAccountManager.new }
+  let(:gaman) { Gaman::GitAccountManager.new }
 
   context 'display_ssh_keys' do
     it 'notice when empty array passed' do
