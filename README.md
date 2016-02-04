@@ -55,6 +55,9 @@ with key_index is a `number` shown in `list` method.
 
     $ gaman current_user
 
+### Check Gaman version
+
+    $ gaman -v (or `--version`)
 
 Params: `--server` (or `-s`): github/bitbucket
 

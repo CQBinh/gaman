@@ -8,6 +8,13 @@ module Gaman
     include Gaman::Messenger
     include Gaman::FileHelper
 
+    desc 'version', 'Show the Gaman version'
+    map %w(-v --version) => :version
+
+    def version
+      puts "Gaman version #{::Gaman::VERSION} on Ruby #{RUBY_VERSION}"
+    end
+
     desc 'current_user', 'Show current github account that ssh connects to'
     long_desc <<-current_user
 
