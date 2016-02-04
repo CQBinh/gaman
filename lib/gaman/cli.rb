@@ -142,11 +142,10 @@ module Gaman
     end
 
     def switch_ssh_key(number, ssh_keys)
-      key = ssh_keys[number]
-      key_path = key[0..-5]
+      key = ssh_keys[number][0..-5]
       system('ssh-add -D')
-      notice_message("Adding #{key_path}")
-      system("ssh-add #{key_path}")
+      notice_message("Adding #{key}")
+      system("ssh-add #{key}")
       current_user
     end
 
