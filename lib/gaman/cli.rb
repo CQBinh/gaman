@@ -63,15 +63,17 @@ module Gaman
       end
     end
 
-    def display_ssh_keys(ssh_keys)
-      fail ArgumentError, 'ssh_keys must be an Array' unless ssh_keys.is_a? Array
+    no_commands{
+      def display_ssh_keys(ssh_keys)
+        fail ArgumentError, 'ssh_keys must be an Array' unless ssh_keys.is_a? Array
 
-      notice_message('You have no ssh key.') if ssh_keys.empty?
+        notice_message('You have no ssh key.') if ssh_keys.empty?
 
-      ssh_keys.each_with_index do |key, index|
-        puts "[#{Rainbow(index).underline.bright.cyan}] - #{key}"
+        ssh_keys.each_with_index do |key, index|
+          puts "[#{Rainbow(index).underline.bright.cyan}] - #{key}"
+        end
       end
-    end
+    }
 
     private
 
