@@ -2,11 +2,11 @@ require 'spec_helper'
 require 'gaman/messenger'
 
 RSpec.describe 'Messenger' do
-  let(:gaman) { Gaman::GithubAccountManager.new }
+  let(:gaman) { Gaman::GitAccountManager.new }
 
   context 'display_ssh_keys' do
-    it 'notice when nil ssh_keys passed' do
-      expect { gaman.display_ssh_keys(nil) }.to output(/no ssh key/).to_stdout
+    it 'notice when empty array passed' do
+      expect { gaman.display_ssh_keys([]) }.to output(/no ssh key/).to_stdout
     end
 
     it 'raise ArgumentError when ssh_keys are not Array' do

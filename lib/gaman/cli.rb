@@ -4,9 +4,16 @@ require_relative 'messenger'
 require_relative 'file_helper'
 
 module Gaman
-  class GithubAccountManager < Thor
+  class GitAccountManager < Thor
     include Gaman::Messenger
     include Gaman::FileHelper
+
+    desc 'version', 'Show the Gaman version'
+    map %w(-v --version) => :version
+
+    def version
+      puts "Gaman version #{::Gaman::VERSION} on Ruby #{RUBY_VERSION}"
+    end
 
     desc 'current_user', 'Show current github account that ssh connects to'
     long_desc <<-current_user
@@ -18,33 +25,22 @@ module Gaman
     current_user
     method_option :server, aliases: '-s'
     def current_user
-      server = options[:server]
-      case server
-      when 'github'
-        check_current_user_github
-      when 'bitbucket'
-        check_current_user_bitbucket
-      else
-        check_current_user_github
-      end
+      check_current_user options.fetch('server', 'github')
     end
 
     desc 'show', 'Show public key so you can copy to clipboard'
     def show
-      system('eval "$(ssh-agent -s)"')
-      ssh_keys = all_public_ssh_file
-      if ssh_keys.nil?
-        error_message('There is no ssh key to show. Exiting...')
-      else
-        get_user_input_number_and_then_show(ssh_keys)
+      eval_ssh_agent_s
+
+      get_user_input_number(all_public_ssh_file) do |number, ssh_keys|
+        show_ssh_key(number, ssh_keys)
       end
     end
 
     desc 'list', 'Check list ssh keys on machine'
     def list
       notice_message('Checking ssh keys in your machine...')
-      ssh_keys = all_public_ssh_file
-      display_ssh_keys(ssh_keys)
+      display_ssh_keys(all_public_ssh_file)
     end
 
     desc 'new', 'Generate new ssh key'
@@ -53,37 +49,81 @@ module Gaman
       system("ssh-keygen -t rsa -b 4096 -C #{options[:email]}")
     end
 
-    desc 'switch', 'Switch to another ssh key'
-    def switch
-      system('eval "$(ssh-agent -s)"')
-      ssh_keys = all_public_ssh_file
-      if ssh_keys.nil?
-        error_message('There is no ssh key to switch. Exiting...')
+    desc 'switch', 'Switch to another ssh key (pass key_index to directly switch)'
+    long_desc <<-switch
+
+    Params: key_index: key index from "list" method
+
+    switch
+    def switch(key_index = nil)
+      if key_index.nil?
+        switch_by_showing_list_keys
       else
-        get_user_input_number_and_then_check_switch(ssh_keys)
+        switch_by_key_index(key_index.to_i)
       end
     end
+
+    no_commands{
+      def display_ssh_keys(ssh_keys)
+        fail ArgumentError, 'ssh_keys must be an Array' unless ssh_keys.is_a? Array
+
+        notice_message('You have no ssh key.') if ssh_keys.empty?
+
+        ssh_keys.each_with_index do |key, index|
+          puts "[#{Rainbow(index).underline.bright.cyan}] - #{key}"
+        end
+      end
+    }
 
     private
 
-    def all_public_ssh_file
-      if File.exist?(ssh_path)
-        files = Dir.entries(ssh_path)
-        files = files.select { |f| f.include?('.pub') && files.include?(f[0..-5]) }
-        files
-      else
-        notice_message('You have no ssh key. To create new one, run this command:')
-        puts Rainbow('$ gaman new -e your_email@domain.com').blue
-        nil
+    def switch_by_key_index(key_index)
+      ssh_keys = all_public_ssh_file
+      return error_message('There are no ssh keys. Exiting...') if ssh_keys.empty?
+      check_number_and_yield_if_valid(key_index, ssh_keys) do |number, ssh_keys|
+        switch_ssh_key(number, ssh_keys)
       end
     end
 
-    def get_user_input_number_and_then_check_switch(ssh_keys)
-      notice_message('Current ssh keyson your system:')
+    def switch_by_showing_list_keys
+      eval_ssh_agent_s
+
+      get_user_input_number(all_public_ssh_file) do |number, ssh_keys|
+        switch_ssh_key(number, ssh_keys)
+      end
+    end
+
+    def eval_ssh_agent_s
+      system('eval "$(ssh-agent -s)"')
+    end
+
+    def all_public_ssh_file
+      if File.exist?(ssh_path)
+        Dir["#{ssh_path}/*.pub"]
+      else
+        notice_message('You have no ssh key. To create new one, run this command:')
+        puts Rainbow('$ gaman new -e your_email@domain.com').blue
+        []
+      end
+    end
+
+    def get_user_input_number(ssh_keys)
+      return error_message('There are no ssh keys. Exiting...') if ssh_keys.empty?
+
+      notice_message('Current ssh keys on your system:')
       message = 'Which key do you want to switch? [Input number]'
       number = input_number(ssh_keys, message)
       if number_valid?(number, ssh_keys)
-        perform_switch_ssh_key(number, ssh_keys)
+        block_given? ? yield(number, ssh_keys) : [number, ssh_keys]
+      else
+        error_message('Wrong value. Exiting...')
+      end
+      # check_number_and_yield_if_valid(number, ssh_keys)
+    end
+
+    def check_number_and_yield_if_valid(number, ssh_keys)
+      if number_valid?(number, ssh_keys)
+        block_given? ? yield(number, ssh_keys) : [number, ssh_keys]
       else
         error_message('Wrong value. Exiting...')
       end
@@ -103,42 +143,23 @@ module Gaman
       !number.nil? && number >= 0 && number <= ssh_keys.size - 1
     end
 
-    def perform_switch_ssh_key(number, ssh_keys)
-      key = ssh_keys[number]
-      key_path = "#{ssh_path}/#{key[0..-5]}"
+    def switch_ssh_key(number, ssh_keys)
+      key = ssh_keys[number][0..-5]
       system('ssh-add -D')
-      notice_message("Adding #{key_path}")
-      system("ssh-add #{key_path}")
+      notice_message("Adding #{key}")
+      system("ssh-add #{key}")
       current_user
     end
 
-    def check_current_user_github
-      notice_message('Checking ssh conection to github...')
-      check_ssh_github = 'ssh -T git@github.com'
-      system(check_ssh_github)
+    def check_current_user(server)
+      servers = { 'github' => 'github.com', 'bitbucket' => 'bitbucket.org' }
+      notice_message("Checking ssh conection to #{server}...")
+      system("ssh -T git@#{servers[server]}")
     end
 
-    def check_current_user_bitbucket
-      notice_message('Checking ssh conection to bitbucket...')
-      check_ssh_github = 'ssh -T git@bitbucket.org'
-      system(check_ssh_github)
-    end
-
-    def get_user_input_number_and_then_show(ssh_keys)
-      notice_message('Current ssh keyson your system:')
-      message = 'Which key do you want to show? [Input number]'
-      number = input_number(ssh_keys, message)
-      if number_valid?(number, ssh_keys)
-        perform_show_ssh_key(number, ssh_keys)
-      else
-        error_message('Wrong value. Exiting...')
-      end
-    end
-
-    def perform_show_ssh_key(number, ssh_keys)
+    def show_ssh_key(number, ssh_keys)
       key = ssh_keys[number]
-      key_path = "#{ssh_path}/#{key}"
-      system("cat #{key_path}")
+      system("cat #{key}")
     end
   end
 end

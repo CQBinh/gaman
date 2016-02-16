@@ -41,6 +41,12 @@ Install as you would any other ruby gem:
 
 And then follow the inline-instruction.
 
+Or
+
+    $ gaman switch key_index
+
+with key_index is a `number` shown in `list` method.
+
 ### Create new ssh key
 
     $ gaman new -e your_email@domain.com
@@ -49,16 +55,19 @@ And then follow the inline-instruction.
 
     $ gaman current_user
 
+### Check Gaman version
+
+    $ gaman -v (or `--version`)
 
 Params: `--server` (or `-s`): github/bitbucket
 
 If there is no param passed, github will be used as default
 
 ## Contributors
-[@at-binhcq](https://github.com/CQBinh) from [AsianTech](http://asiantech.vn) with love.
+[@CQBinh](https://github.com/CQBinh) from [AsianTech](http://asiantech.vn) with love.
 ## Contributing
 
-1. Fork [the project](https://github.com/CQBinh/gaman)
+1. Fork [https://github.com/CQBinh/gaman](https://github.com/CQBinh/gaman)
 2. Create your feature branch (`git checkout -b my-awesome-feature`)
 3. Commit your changes (`git commit -m 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
