@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'gaman/file_helper'
 
 RSpec.describe 'FileHelper' do
-  let(:gaman) { Gaman::GithubAccountManager.new }
+  let(:gaman) { Gaman::GitAccountManager.new }
 
   context 'ssh_path' do
     it 'right ssh path' do
