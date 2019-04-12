@@ -152,7 +152,7 @@ module Gaman
     end
 
     def check_current_user(server)
-      servers = { 'github' => 'github.com', 'bitbucket' => 'bitbucket.org' }
+      servers = { 'github' => 'github.com', 'bitbucket' => 'bitbucket.org', 'gitlab' => 'gitlab.com' }
       notice_message("Checking ssh conection to #{server}...")
       system("ssh -T git@#{servers[server]}")
     end
